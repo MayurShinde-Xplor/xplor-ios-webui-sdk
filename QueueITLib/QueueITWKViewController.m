@@ -86,7 +86,8 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [super viewDidLoad];
     
     // Add navigation bar
-    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
     self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
 
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"Queue"];
@@ -96,15 +97,15 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     self.navigationBar.items = @[navItem];
     [self.view addSubview:self.navigationBar];
     
-    self.spinner = [[UIActivityIndicatorView alloc]initWithFrame:self.view.bounds];
+    self.spinner = [[UIActivityIndicatorView alloc] initWithFrame:self.view.bounds];
     [self.spinner setColor:[UIColor grayColor]];
     [self.spinner setBackgroundColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0]]; // Set the background color to a light gray color
     
-    WKPreferences* preferences = [[WKPreferences alloc]init];
+    WKPreferences *preferences = [[WKPreferences alloc] init];
     preferences.javaScriptEnabled = YES;
-    WKWebViewConfiguration* config = [[WKWebViewConfiguration alloc]init];
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
     config.preferences = preferences;
-    WKWebView* webview = [[WKWebView alloc]initWithFrame:self.view.bounds configuration:config];
+    WKWebView *webview = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:config];
     webview.navigationDelegate = self;
     [webview setAutoresizingMask: UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
     // Make webview transparent

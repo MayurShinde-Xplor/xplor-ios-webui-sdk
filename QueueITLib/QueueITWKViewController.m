@@ -4,27 +4,22 @@
 @interface QueueITWKViewController ()<WKNavigationDelegate>
 @property (nonatomic) WKWebView* webView;
 @property (nonatomic, strong) UIViewController* host;
-
-@property (nonatomic, strong)NSString* queueUrl;
-@property (nonatomic, strong)NSString* eventTargetUrl;
-@property (nonatomic, strong)UIActivityIndicatorView* spinner;
-@property (nonatomic, strong)NSString* customerId;
-@property (nonatomic, strong)NSString* eventId;
+@property (nonatomic, strong) NSString* queueUrl;
+@property (nonatomic, strong) NSString* eventTargetUrl;
+@property (nonatomic, strong) UIActivityIndicatorView* spinner;
+@property (nonatomic, strong) NSString* customerId;
+@property (nonatomic, strong) NSString* eventId;
 @property BOOL isQueuePassed;
-
 @property (nonatomic, strong) UINavigationBar* navigationBar; // Add property for navigation bar
 @end
-
-static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTagName('body')[0].className";
 
 @implementation QueueITWKViewController
 
 -(instancetype)initWithHost:(UIViewController *)host
-                   queueUrl:(NSString*)queueUrl
-             eventTargetUrl:(NSString*)eventTargetUrl
-                 customerId:(NSString*)customerId
-                    eventId:(NSString*)eventId
-{
+                    queueUrl:(NSString*)queueUrl
+               eventTargetUrl:(NSString*)eventTargetUrl
+                   customerId:(NSString*)customerId
+                      eventId:(NSString*)eventId {
     self = [super init];
     if(self) {
         self.host = host;
@@ -39,87 +34,54 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 
 - (void)close:(void (^ __nullable)(void))onComplete {
     [self.host dismissViewControllerAnimated:YES completion:^{
-        if(onComplete!=nil){
+        if(onComplete != nil){
             onComplete();
         }
     }];
 }
 
-- (BOOL) isTargetUrl:(nonnull NSURL*) targetUrl
-      destinationUrl:(nonnull NSURL*) destinationUrl {
-    NSString* destinationHost = destinationUrl.host;
-    NSString* destinationPath = destinationUrl.path;
-    NSString* targetHost = targetUrl.host;
-    NSString* targetPath = targetUrl.path;
-    
-    return [destinationHost isEqualToString: targetHost]
-    && [destinationPath isEqualToString: targetPath];
-}
-
-- (BOOL) isBlockedUrl:(nonnull NSURL*) destinationUrl {
-    NSString* path = destinationUrl.path;
-    if([path hasPrefix: @"/what-is-this.html"]){
-        return true;
-    }
-    return false;
-}
-
-- (BOOL)handleSpecialUrls:(NSURL*) url
-          decisionHandler:(nonnull void (^)(WKNavigationActionPolicy))decisionHandler {
-    if([[url absoluteString] isEqualToString: QueueCloseUrl]){
-        [self close: ^{
-            [self.delegate notifyViewControllerClosed];
-        }];
-        decisionHandler(WKNavigationActionPolicyCancel);
-        return true;
-    } else if ([[url absoluteString] isEqualToString: QueueRestartSessionUrl]){
-        [self close:^{
-            [self.delegate notifyViewControllerSessionRestart];
-        }];
-        decisionHandler(WKNavigationActionPolicyCancel);
-        return true;
-    }
-    return NO;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.spinner = [[UIActivityIndicatorView alloc]initWithFrame:self.view.bounds];
+
+    self.spinner = [[UIActivityIndicatorView alloc] initWithFrame:self.view.bounds];
     [self.spinner setColor:[UIColor grayColor]];
-    
-    WKPreferences* preferences = [[WKPreferences alloc]init];
+
+    WKPreferences* preferences = [[WKPreferences alloc] init];
     preferences.javaScriptEnabled = YES;
-    WKWebViewConfiguration* config = [[WKWebViewConfiguration alloc]init];
+
+    WKWebViewConfiguration* config = [[WKWebViewConfiguration alloc] init];
     config.preferences = preferences;
-    WKWebView* webview = [[WKWebView alloc]initWithFrame:self.view.bounds configuration:config];
+
+    WKWebView* webview = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:config];
     webview.navigationDelegate = self;
     [webview setAutoresizingMask: UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
+
     // Make webview transparent
     webview.opaque = NO;
     webview.backgroundColor = [UIColor clearColor];
     self.webView = webview;
-    
+
     // Add navigation bar
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
     self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
+
     UINavigationItem* navItem = [[UINavigationItem alloc] initWithTitle:@"Queue"];
     UIBarButtonItem* closeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(closeButtonTapped)];
     navItem.leftBarButtonItem = closeItem;
     self.navigationBar.items = @[navItem];
-    
     [self.view addSubview:self.navigationBar];
 }
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
+
     [self.spinner startAnimating];
     self.webView.frame = CGRectMake(0, self.navigationBar.frame.size.height, self.view.bounds.size.width, self.view.bounds.size.height - self.navigationBar.frame.size.height);
     self.spinner.frame = self.view.bounds;
-    
+
     [self.view addSubview:self.webView];
     [self.webView addSubview:self.spinner];
-    
+
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.queueUrl]]];
 }
 

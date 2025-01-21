@@ -27,4 +27,7 @@
 -(void)notifyViewControllerSessionRestart;
 -(void)notifyViewControllerQueuePassed:(NSString* _Nullable) queueToken;
 -(void)notifyViewControllerPageUrlChanged:(NSString* _Nullable) urlString;
+// New property and method declarations
+@property (nonatomic, strong) UINavigationBar* navigationBar; // Add property for navigation bar
+- (void)closeButtonTapped; // Method for close button action
 @end

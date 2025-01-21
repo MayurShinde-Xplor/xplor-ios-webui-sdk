@@ -11,6 +11,8 @@
 @property (nonatomic, strong)NSString* customerId;
 @property (nonatomic, strong)NSString* eventId;
 @property BOOL isQueuePassed;
+
+@property (nonatomic, strong) UINavigationBar* navigationBar; // Add property for navigation bar
 @end
 
 static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTagName('body')[0].className";
@@ -82,6 +84,7 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.spinner = [[UIActivityIndicatorView alloc]initWithFrame:self.view.bounds];
     [self.spinner setColor:[UIColor grayColor]];
     
@@ -96,22 +99,32 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     webview.opaque = NO;
     webview.backgroundColor = [UIColor clearColor];
     self.webView = webview;
+    
+    // Add navigation bar
+    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
+    UINavigationItem* navItem = [[UINavigationItem alloc] initWithTitle:@"Queue"];
+    UIBarButtonItem* closeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(closeButtonTapped)];
+    navItem.leftBarButtonItem = closeItem;
+    self.navigationBar.items = @[navItem];
+    
+    [self.view addSubview:self.navigationBar];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-}
-
--(void)viewWillLayoutSubviews{
+- (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     [self.spinner startAnimating];
-    self.webView.frame = self.view.bounds;
+    self.webView.frame = CGRectMake(0, self.navigationBar.frame.size.height, self.view.bounds.size.width, self.view.bounds.size.height - self.navigationBar.frame.size.height);
     self.spinner.frame = self.view.bounds;
     
     [self.view addSubview:self.webView];
     [self.webView addSubview:self.spinner];
     
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.queueUrl]]];
+}
+
+- (void)closeButtonTapped {
+    [self close:nil];
 }
 
 -(void)viewDidAppear:(BOOL)animated{

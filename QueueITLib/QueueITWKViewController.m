@@ -100,6 +100,9 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Add web view below navigation bar
     CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
     CGFloat webViewY = statusBarHeight + navigationBarHeight;
+    
+    WKPreferences *preferences = [[WKPreferences alloc] init]; preferences.javaScriptEnabled = YES;
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init]; config.preferences = preferences;
     self.webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, webViewY, self.view.frame.size.width, self.view.frame.size.height - webViewY) configuration:config];
     self.webView.navigationDelegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -119,15 +122,17 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [super viewWillAppear:animated];
 }
 
--(void)viewWillLayoutSubviews{
+- (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
+    
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
+    CGFloat webViewY = statusBarHeight + navigationBarHeight;
+    
+    self.webView.frame = CGRectMake(0, webViewY, self.view.frame.size.width, self.view.frame.size.height - webViewY);
+    self.spinner.frame = self.webView.bounds;
+    
     [self.spinner startAnimating];
-    self.webView.frame = self.view.bounds;
-    self.spinner.frame = self.view.bounds;
-    
-    [self.view addSubview:self.webView];
-    [self.webView addSubview:self.spinner];
-    
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.queueUrl]]];
 }
 
@@ -138,8 +143,18 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+    
+    // Remove the spinner
+    [self.spinner removeFromSuperview];
+    self.spinner = nil;
+    
+    // Remove the web view
     [self.webView removeFromSuperview];
     self.webView = nil;
+    
+    // Remove the navigation bar
+    [self.navigationBar removeFromSuperview];
+    self.navigationBar = nil;
 }
 
 - (void)closeButtonTapped {

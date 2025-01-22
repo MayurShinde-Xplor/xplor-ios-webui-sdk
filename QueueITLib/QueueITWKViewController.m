@@ -158,7 +158,9 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 }
 
 - (void)closeButtonTapped {
-    [self close:nil];
+    [self close: ^{
+        [self.delegate notifyViewControllerClosed];
+    }];
 }
 
 #pragma mark - WKNavigationDelegate

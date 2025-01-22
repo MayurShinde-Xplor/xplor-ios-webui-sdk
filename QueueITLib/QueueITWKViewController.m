@@ -97,22 +97,23 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     self.navigationBar.items = @[navItem];
     [self.view addSubview:self.navigationBar];
     
-    self.spinner = [[UIActivityIndicatorView alloc] initWithFrame:self.view.bounds];
+    // Add web view below navigation bar
+    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
+    CGFloat webViewY = statusBarHeight + navigationBarHeight;
+    self.webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, webViewY, self.view.frame.size.width, self.view.frame.size.height - webViewY) configuration:config];
+    self.webView.navigationDelegate = self;
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.webView.opaque = NO;
+    self.webView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.webView];
+    
+    // Add spinner
+    self.spinner = [[UIActivityIndicatorView alloc] initWithFrame:self.webView.bounds];
     [self.spinner setColor:[UIColor grayColor]];
     [self.spinner setBackgroundColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0]]; // Set the background color to a light gray color
-    
-    WKPreferences *preferences = [[WKPreferences alloc] init];
-    preferences.javaScriptEnabled = YES;
-    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
-    config.preferences = preferences;
-    WKWebView *webview = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:config];
-    webview.navigationDelegate = self;
-    [webview setAutoresizingMask: UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
-    // Make webview transparent
-    webview.opaque = NO;
-    webview.backgroundColor = [UIColor whiteColor];
-    self.webView = webview;
+    [self.webView addSubview:self.spinner];
 }
+
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];

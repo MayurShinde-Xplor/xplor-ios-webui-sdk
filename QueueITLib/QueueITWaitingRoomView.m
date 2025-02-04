@@ -43,14 +43,14 @@
     }
     if (self.delayInterval > 0) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delayInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.host presentViewController:queueWKVC animated:NO completion:^{
+            [self.host presentViewController:queueWKVC animated:YES completion:^{
                 self.currentWebView = queueWKVC;
                 [self.delegate notifyViewQueueDidAppear:self ];
             }];
         });
     } else {	
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.host presentViewController:queueWKVC animated:NO completion:^{
+            [self.host presentViewController:queueWKVC animated:YES completion:^{
                 self.currentWebView = queueWKVC;
                 [self.delegate notifyViewQueueDidAppear:self ];
             }];

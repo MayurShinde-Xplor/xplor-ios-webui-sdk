@@ -98,6 +98,8 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 
     navItem.leftBarButtonItem = chevronItem;
     self.navigationBar.items = @[navItem];
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
+    self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     [self.view addSubview:self.navigationBar];
     
     // Add web view below navigation bar

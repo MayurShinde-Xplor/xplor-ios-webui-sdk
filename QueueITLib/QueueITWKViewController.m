@@ -86,7 +86,7 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [super viewDidLoad];
 
     // Set background color of the view
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3];
     
     // Add navigation bar
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
@@ -118,11 +118,9 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Add spinner
     self.spinner = [[UIActivityIndicatorView alloc] initWithFrame:self.webView.bounds];
     [self.spinner setColor:[UIColor grayColor]];
-    [self.spinner setBackgroundColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0]]; // Set the background color to a light gray color
+    [self.spinner setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.3]]; // Set the background color to a light gray color
     [self.webView addSubview:self.spinner];
 }
-
-
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];

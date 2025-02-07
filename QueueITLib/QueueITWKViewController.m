@@ -88,17 +88,20 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Set background color of the view
     self.view.backgroundColor = [UIColor whiteColor];
     
+    // Apply gradient to the navigation bar and status bar
+    [self applyGradientToNavigationBar];
+    
     // Add navigation bar
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    [self applyGradientToNavigationBar];
-    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
-    self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
+    self.navigationBar.backgroundColor = [UIColor clearColor]; // Make navigation bar background transparent
     
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *chevronItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonTapped)];
     navItem.leftBarButtonItem = chevronItem;
     self.navigationBar.items = @[navItem];
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
+    self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     [self.view addSubview:self.navigationBar];
     
     // Add web view below navigation bar
@@ -168,8 +171,11 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 }
 
 - (void)applyGradientToNavigationBar {
-    CGRect navFrame = CGRectMake(0, 0, self.view.frame.size.width, self.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height);
-    UIView *gradientView = [[UIView alloc] initWithFrame:navFrame];
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
+    CGRect gradientFrame = CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight + navigationBarHeight);
+    
+    UIView *gradientView = [[UIView alloc] initWithFrame:gradientFrame];
     
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = gradientView.bounds;

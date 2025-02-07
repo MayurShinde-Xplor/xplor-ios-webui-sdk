@@ -88,9 +88,20 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Set background color of the view
     self.view.backgroundColor = [UIColor whiteColor];
     
-    // Add navigation bar
+    // Add gradient view to cover status bar and navigation bar
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
+    CGFloat navigationBarHeight = 44;
+    UIView *gradientView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight + navigationBarHeight)];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = gradientView.bounds;
+    gradient.colors = @[(id)[UIColor redColor].CGColor, (id)[UIColor yellowColor].CGColor];
+    [gradientView.layer insertSublayer:gradient atIndex:0];
+    
+    [self.view addSubview:gradientView];
+    
+    // Add navigation bar
+    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, navigationBarHeight)];
     self.navigationBar.backgroundColor = [UIColor clearColor]; // Make navigation bar background transparent
     
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
@@ -101,11 +112,7 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     [self.view addSubview:self.navigationBar];
     
-    // Apply gradient to the navigation bar and status bar
-    [self applyGradientToNavigationBar];
-    
     // Add web view below navigation bar
-    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
     CGFloat webViewY = statusBarHeight + navigationBarHeight;
     WKPreferences *preferences = [[WKPreferences alloc] init];
     preferences.javaScriptEnabled = YES;

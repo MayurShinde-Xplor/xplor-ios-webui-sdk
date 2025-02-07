@@ -91,14 +91,14 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Add navigation bar
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
+    [self applyGradientToNavigationBar];
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
+    self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *chevronItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonTapped)];
     navItem.leftBarButtonItem = chevronItem;
     self.navigationBar.items = @[navItem];
-    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
-    self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     [self.view addSubview:self.navigationBar];
     
     // Add web view below navigation bar
@@ -165,6 +165,18 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [self close: ^{
         [self.delegate notifyViewControllerClosed];
     }];
+}
+
+- (void)applyGradientToNavigationBar {
+    CGRect navFrame = CGRectMake(0, 0, self.view.frame.size.width, self.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height);
+    UIView *gradientView = [[UIView alloc] initWithFrame:navFrame];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = gradientView.bounds;
+    gradient.colors = @[(id)[UIColor redColor].CGColor, (id)[UIColor yellowColor].CGColor];
+    
+    [gradientView.layer insertSublayer:gradient atIndex:0];
+    [self.view insertSubview:gradientView belowSubview:self.navigationBar];
 }
 
 #pragma mark - WKNavigationDelegate

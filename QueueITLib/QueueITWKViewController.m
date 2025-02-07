@@ -84,25 +84,17 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     // Set background color of the view
     self.view.backgroundColor = [UIColor whiteColor];
     
     // Add navigation bar
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    
-    // Create gradient layer
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight + self.navigationBar.frame.size.height);
-    gradient.colors = @[(id)[Color.headerprimarystart CGColor], (id)[Color.headerprimaryend CGColor]];
-    
-    // Insert gradient layer below the navigation bar
-    [self.navigationBar.layer insertSublayer:gradient atIndex:0];
+    self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
     
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *chevronItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonTapped)];
-    
     navItem.leftBarButtonItem = chevronItem;
     self.navigationBar.items = @[navItem];
     self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
@@ -112,7 +104,6 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Add web view below navigation bar
     CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
     CGFloat webViewY = statusBarHeight + navigationBarHeight;
-    
     WKPreferences *preferences = [[WKPreferences alloc] init];
     preferences.javaScriptEnabled = YES;
     WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
@@ -137,9 +128,6 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    
-    // Update the frame of the gradient layer when the view layout changes
-    gradient.frame = CGRectMake(0, 0, self.view.frame.size.width, [UIApplication sharedApplication].statusBarFrame.size.height + self.navigationBar.frame.size.height);
     
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat navigationBarHeight = self.navigationBar.frame.size.height;

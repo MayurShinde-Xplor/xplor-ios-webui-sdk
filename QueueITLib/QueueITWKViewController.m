@@ -93,9 +93,6 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
     self.navigationBar.backgroundColor = [UIColor clearColor]; // Make navigation bar background transparent
     
-    // Apply gradient to the navigation bar and status bar
-    [self applyGradientToNavigationBar];
-    
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *chevronItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonTapped)];
     navItem.leftBarButtonItem = chevronItem;
@@ -103,6 +100,9 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]}; // Set title text color to black
     self.navigationBar.tintColor = [UIColor blackColor]; // Set chevron color to black
     [self.view addSubview:self.navigationBar];
+    
+    // Apply gradient to the navigation bar and status bar
+    [self applyGradientToNavigationBar];
     
     // Add web view below navigation bar
     CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
@@ -171,18 +171,24 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
 }
 
 - (void)applyGradientToNavigationBar {
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
-    CGRect gradientFrame = CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight + navigationBarHeight);
-    
-    UIView *gradientView = [[UIView alloc] initWithFrame:gradientFrame];
+    CGRect navFrame = self.navigationBar.frame;
+    UIView *gradientView = [[UIView alloc] initWithFrame:navFrame];
+    gradientView.userInteractionEnabled = NO; // Allow interactions to pass through
     
     CAGradientLayer *gradient = [CAGradientLayer layer];
     gradient.frame = gradientView.bounds;
     gradient.colors = @[(id)[UIColor redColor].CGColor, (id)[UIColor yellowColor].CGColor];
     
     [gradientView.layer insertSublayer:gradient atIndex:0];
-    [self.view insertSubview:gradientView belowSubview:self.navigationBar];
+    [self.navigationBar setBackgroundImage:[self imageFromLayer:gradient] forBarMetrics:UIBarMetricsDefault];
+}
+
+- (UIImage *)imageFromLayer:(CALayer *)layer {
+    UIGraphicsBeginImageContext(layer.frame.size);
+    [layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *outputImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return outputImage;
 }
 
 #pragma mark - WKNavigationDelegate

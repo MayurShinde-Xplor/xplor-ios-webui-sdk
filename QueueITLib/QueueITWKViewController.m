@@ -88,21 +88,10 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     // Set background color of the view
     self.view.backgroundColor = [UIColor whiteColor];
     
-    // Add gradient view to cover status bar and navigation bar
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    CGFloat navigationBarHeight = 44;
-    UIView *gradientView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight + navigationBarHeight)];
-    
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = gradientView.bounds;
-    gradient.colors = @[(id)[UIColor redColor].CGColor, (id)[UIColor yellowColor].CGColor];
-    [gradientView.layer insertSublayer:gradient atIndex:0];
-    
-    [self.view addSubview:gradientView];
-    
     // Add navigation bar
-    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, navigationBarHeight)];
-    self.navigationBar.backgroundColor = [UIColor clearColor]; // Make navigation bar background transparent
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
+    self.navigationBar.backgroundColor = [UIColor whiteColor]; // Set navigation bar background color to white
     
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
     UIBarButtonItem *chevronItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonTapped)];
@@ -113,6 +102,7 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [self.view addSubview:self.navigationBar];
     
     // Add web view below navigation bar
+    CGFloat navigationBarHeight = self.navigationBar.frame.size.height;
     CGFloat webViewY = statusBarHeight + navigationBarHeight;
     WKPreferences *preferences = [[WKPreferences alloc] init];
     preferences.javaScriptEnabled = YES;
@@ -175,27 +165,6 @@ static NSString * const JAVASCRIPT_GET_BODY_CLASSES = @"document.getElementsByTa
     [self close: ^{
         [self.delegate notifyViewControllerClosed];
     }];
-}
-
-- (void)applyGradientToNavigationBar {
-    CGRect navFrame = self.navigationBar.frame;
-    UIView *gradientView = [[UIView alloc] initWithFrame:navFrame];
-    gradientView.userInteractionEnabled = NO; // Allow interactions to pass through
-    
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = gradientView.bounds;
-    gradient.colors = @[(id)[UIColor redColor].CGColor, (id)[UIColor yellowColor].CGColor];
-    
-    [gradientView.layer insertSublayer:gradient atIndex:0];
-    [self.navigationBar setBackgroundImage:[self imageFromLayer:gradient] forBarMetrics:UIBarMetricsDefault];
-}
-
-- (UIImage *)imageFromLayer:(CALayer *)layer {
-    UIGraphicsBeginImageContext(layer.frame.size);
-    [layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *outputImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return outputImage;
 }
 
 #pragma mark - WKNavigationDelegate
